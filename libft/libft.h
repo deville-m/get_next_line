@@ -6,7 +6,7 @@
 /*   By: mdeville <mdeville@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/20 21:13:01 by mdeville          #+#    #+#             */
-/*   Updated: 2017/11/13 19:33:08 by mdeville         ###   ########.fr       */
+/*   Updated: 2017/11/20 21:48:55 by mdeville         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ void				ft_putnbr_fd(int n, int fd);
 void				ft_putstr(char const *s);
 void				ft_putstr_fd(char const *s, int fd);
 t_rbnode			*ft_rbnodenew(void const *content, size_t content_size);
+void				*ft_realloc(void *src, size_t size, size_t newsize);
 int					ft_str_is_alpha(const char *str);
 int					ft_str_is_lowercase(const char *str);
 int					ft_str_is_numeric(const char *str);

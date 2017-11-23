@@ -27,7 +27,7 @@ SRC=ft_memset.c ft_bzero.c ft_memcpy.c ft_memccpy.c ft_memmove.c	\
 	ft_isgraph.c ft_isspace.c ft_isxdigit.c ft_str_is_alpha.c		\
 	ft_str_is_lowercase.c ft_str_is_numeric.c ft_str_is_printable.c	\
 	ft_str_is_uppercase.c ft_strcasecmp.c ft_strncasecmp.c			\
-	ft_strcapitalize.c
+	ft_strcapitalize.c ft_realloc.c
 OBJ=$(SRC:.c=.o)
 
 all: $(NAME)
