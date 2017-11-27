@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdeville <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mdeville <mdeville@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/15 20:16:52 by mdeville          #+#    #+#             */
-/*   Updated: 2017/11/23 20:25:21 by mdeville         ###   ########.fr       */
+/*   Created: 2017/11/24 14:09:17 by mdeville          #+#    #+#             */
+/*   Updated: 2017/11/27 15:48:49 by mdeville         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,30 +14,25 @@
 #include "get_next_line.h"
 #include <stdlib.h>
 
-static char		*copy(char *tmp, int *offset)
+static char		*copy(char *dest, char *str, int *offset)
 {
+	int		i;
+	int		j;
 	char	*res;
-	size_t	i;
-	size_t	j;
-	size_t	max;
 
-	i = 0 + *offset;
-	j = 0;
-	while (tmp[i] && tmp[i] != '\n')
-	{
-		j += 1;
-		i += 1;
-	}
-	max = j;
-	if (!(res = (char *)malloc(sizeof(char) * (i + 1))))
+	i = *offset;
+	while (str[i] && str[i] != '\n')
+		i++;
+	if (!(res = (char *)malloc(sizeof(char) * (ft_strlen(dest) + i + 1))))
 		return (NULL);
-	res[i] = '\0';
-	i = 0 + *offset;
-	j = 0;
-	while (j < max)
-		res[j++] = tmp[i++];
-	while (tmp[i++] == '\n');
-	*offset = (!tmp[i]) ? 0 : i;
+	ft_strcpy(res, dest);
+	i = *offset;
+	j = ft_strlen(res);
+	while (str[i] && str[i] != '\n')
+		res[j++] = str[i++];
+	res[j] = '\0';
+	*offset = (str[i] == '\n') ? i + 1 : 0;
+	free(dest);
 	return (res);
 }
 
@@ -51,7 +46,7 @@ static t_clist	*getcontent(t_clist **alst, int fd)
 	while (tmp)
 	{
 		if (tmp->fd == fd)
-			return tmp;
+			return (tmp);
 		tmp = tmp->next;
 	}
 	tmp = (t_clist *)malloc(sizeof(t_clist));
@@ -66,63 +61,38 @@ static t_clist	*getcontent(t_clist **alst, int fd)
 
 static void		delclist(t_clist **lst, t_clist *buff)
 {
-	t_clist		*curr;
-	t_clist		*prev;
-
-	curr = *lst;
-	prev = NULL;
-	while (curr)
-	{
-		if (curr == buff)
-		{
-			if (prev)
-				prev->next = curr->next;
-			else
-				*lst = (*lst)->next;
-			free(curr->next);
-			free(curr);
-			return ;
-		}
-		prev = curr;
-		curr = curr->next;
-	}
+	if (!lst)
+		return ;
+	while ((*lst) != buff && (*lst))
+		lst = &(*lst)->next;
+	*lst = buff->next;
+	free(buff);
 }
 
 int				get_next_line(const int fd, char **line)
 {
 	static t_clist	*lst = NULL;
 	t_clist			*b;
-	char			*tmp;
 	int				nb;
 
-	if (fd < 0 || read(fd, "", 0) < 0 || !line || !(b = getcontent(&lst, fd)))
+	if (fd < 0 || read(fd, "", 0) < 0 || !line || !(b = getcontent(&lst, fd))
+		|| !(*line = ft_strnew(1)))
 		return (-1);
 	if (b->offset)
 	{
-		*line = copy(b->buff, &b->offset);
-		if (!*line)
-		{
-			delclist(&lst, b);
-			return (-1);
-		}
+		*line = copy(*line, b->buff, &b->offset);
 		if (b->offset)
 			return (1);
 	}
-	else
-		tmp = ft_strnew(1);
-	while((nb = read(fd, b->buff, BUFF_SIZE)))
+	while ((nb = read(fd, b->buff, BUFF_SIZE)))
 	{
 		b->buff[nb] = '\0';
-		*line = tmp;
-		tmp = ft_strjoin(tmp, b->buff);
-		free(*line);
-		if ((*line = ft_strchr(tmp, '\n')))
-		{
-			b->offset = 0;
-			*line = copy(tmp, &b->offset);
-			free(tmp);
+		*line = copy(*line, b->buff, &b->offset);
+		if (b->offset)
 			return (1);
-		}
 	}
+	if (**line != '\0')
+		return (1);
+	delclist(&lst, b);
 	return (0);
 }
