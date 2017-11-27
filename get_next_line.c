@@ -6,7 +6,7 @@
 /*   By: mdeville <mdeville@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/24 14:09:17 by mdeville          #+#    #+#             */
-/*   Updated: 2017/11/27 15:48:49 by mdeville         ###   ########.fr       */
+/*   Updated: 2017/11/27 16:15:46 by mdeville         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,14 +59,15 @@ static t_clist	*getcontent(t_clist **alst, int fd)
 	return (*alst);
 }
 
-static void		delclist(t_clist **lst, t_clist *buff)
+static int		delclist(t_clist **lst, t_clist *buff)
 {
-	if (!lst)
-		return ;
+	if (!lst || !buff)
+		return (0);
 	while ((*lst) != buff && (*lst))
 		lst = &(*lst)->next;
 	*lst = buff->next;
 	free(buff);
+	return (0);
 }
 
 int				get_next_line(const int fd, char **line)
@@ -80,19 +81,20 @@ int				get_next_line(const int fd, char **line)
 		return (-1);
 	if (b->offset)
 	{
-		*line = copy(*line, b->buff, &b->offset);
+		if (!(*line = copy(*line, b->buff, &b->offset)))
+			return (-1);
 		if (b->offset)
 			return (1);
 	}
 	while ((nb = read(fd, b->buff, BUFF_SIZE)))
 	{
 		b->buff[nb] = '\0';
-		*line = copy(*line, b->buff, &b->offset);
+		if (!(*line = copy(*line, b->buff, &b->offset)))
+			return (-1);
 		if (b->offset)
 			return (1);
 	}
 	if (**line != '\0')
 		return (1);
-	delclist(&lst, b);
-	return (0);
+	return (delclist(&lst, b));
 }

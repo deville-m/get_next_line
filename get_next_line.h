@@ -6,7 +6,7 @@
 /*   By: mdeville <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/15 20:24:11 by mdeville          #+#    #+#             */
-/*   Updated: 2017/11/27 15:29:40 by mdeville         ###   ########.fr       */
+/*   Updated: 2017/11/27 16:01:02 by mdeville         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define GET_NEXT_LINE_H
 
 # include <unistd.h>
-# define BUFF_SIZE 2
+# define BUFF_SIZE 32
 
 typedef struct		s_clist
 {
